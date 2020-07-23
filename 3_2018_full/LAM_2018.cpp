@@ -977,7 +977,7 @@ void model_parameters::Eval_CTP(void)
 	Fpbrm=Fm(nyears);
 	Zpbrh=Zh(nyears);
 	Zpbrm=Zm(nyears);
-	for (int i=1;i<=1;i++)
+	for (int i=1;i<=nyear_proy;i++)
 	{
 		Bph=sum(elem_prod(Nph*Prob_talla_h,Wmed(2)));
 		Bpm=sum(elem_prod(Npm*Prob_talla_m,Wmed(1)));

@@ -842,7 +842,7 @@ FUNCTION Eval_CTP
 	Zpbrh=Zh(nyears);
 	Zpbrm=Zm(nyears);
 	
-	for (int i=1;i<=1;i++)
+	for (int i=1;i<=nyear_proy;i++)
 	{
 		Bph=sum(elem_prod(Nph*Prob_talla_h,Wmed(2)));
 		Bpm=sum(elem_prod(Npm*Prob_talla_m,Wmed(1)));
@@ -874,12 +874,12 @@ FUNCTION Eval_CTP
  }
  
  
- CBA=YTP(2);// es para el a–o proyectado
+ CBA=YTP(2);// es para el year proyectado
  
  
- // Rutina para la estimaci—n de RPR
+ // Rutina para la estimacion de RPR
  
- Nvp=Nv(nyears);// toma la ultima estimaci—n
+ Nvp=Nv(nyears);// toma la ultima estimacion
 
  for (int i=1;i<=nyear_proy;i++)
  {
