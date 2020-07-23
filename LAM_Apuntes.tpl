@@ -31,7 +31,7 @@ DATA_SECTION
  init_matrix Wmed(1,2,1,ntallas);
 
 //!! ad_comm::change_datafile_name("17.ctl");
- init_vector cvar(1,3);//# Coeficiente de variaci—n de los desvios Rt, No y prop_machos en el Reclutamiento
+ init_vector cvar(1,3);//# Coeficiente de variacion de los desvios Rt, No y prop_machos en el Reclutamiento
  init_vector dt(1,3);
  
  init_matrix Par_bio(1,2,1,5); //#Loo, k, Lt(a=1), cv(edad), M; filas machos,hembras y prior si se estiman
@@ -131,8 +131,8 @@ DATA_SECTION
  
  // Simulaciones
  init_int nyear_proy
- init_number pRec // Proporci—n de Reclutamiento para Proyecci—n de capturas ante distintos niveles (1.0 proporcional al reclutamiento medio)
- init_number opt_sim // Opci—n para simular o estimar(0=simula, 1=estima)
+ init_number pRec // Proporcion de Reclutamiento para Proyeccion de capturas ante distintos niveles (1.0 proporcional al reclutamiento medio)
+ init_number opt_sim // Opcion para simular o estimar(0=simula, 1=estima)
  int reporte_mcmc
 
 
@@ -180,7 +180,7 @@ PARAMETER_SECTION
 // parametros reclutamientos, desvios R y No y mortalidades
  init_number log_Ro(1); // Inicializado en que valor..??? (En fase 1)
  init_bounded_number log_propmR(-2.3,-0.1,phs_prop_mR); // prop de machos en el reclutamiento (comienza en el valor medio entre 0.1 y 0.9, es decir 0.5)
- init_bounded_dev_vector log_dev_Ro(1,nyears,-10,10,phs_devRt); //dev_vector para que la suma de los par‡metros al ser estimados sea 0
+ init_bounded_dev_vector log_dev_Ro(1,nyears,-10,10,phs_devRt); //dev_vector para que la suma de los parametros al ser estimados sea 0
  init_bounded_vector log_dev_Nom(1,nedades,-10,10,phs_devNo); // -10, 10 significa...
  init_bounded_vector log_dev_Noh(1,nedades,-10,10,phs_devNo);
  init_bounded_vector log_Fm(1,nyears,-20,-0.2,phs_F); // log  mortalidad por pesca por flota machos F LIMITADA EN 0.8187 !!!!!!
@@ -570,7 +570,7 @@ FUNCTION Eval_abundancia
  beta=(1-h)*SSBo/(5*h-1);
 
 
- // genero una estructura inicial en equilibrio para el primer a–o
+ // genero una estructura inicial en equilibrio para el primer anho
  Neqh(1)=mfexp(log_Ro);//hembras
 
  for (j=2;j<=nedades;j++)
@@ -603,7 +603,7 @@ FUNCTION Eval_abundancia
 
  Rpred(1)=mfexp(log_Ro);//
 
- // se estima la sobrevivencia por edad(a+1) y a–o(t+1)
+ // se estima la sobrevivencia por edad(a+1) y anho(t+1)
  for (i=1;i<nyears;i++)
  {
      Rpred(i+1)=mfexp(log_Ro);//
@@ -633,7 +633,7 @@ FUNCTION Eval_deinteres
 // Rutina para calcular RPR
  Nv=Nh;// solo para empezar los calculos
 
-// se estima la sobrevivencia por edad(a+1) y a–o(t+1)
+// se estima la sobrevivencia por edad(a+1) y anho(t+1)
  for (int i=1;i<nyears;i++)
  {
      Nv(i+1)(2,nedades)=++Nv(i)(1,nedades-1)*exp(-1.0*Mh);
@@ -828,10 +828,10 @@ FUNCTION Eval_CTP
 
  for (int j=1;j<=npbr;j++)
  { // son # PBR only!
-	Nph=Nh(nyears); //Nh ser’a la abundancia de hembras a inicios 2018
+	Nph=Nh(nyears); //Nh seria la abundancia de hembras a inicios 2018
 	Npm=Nm(nyears);
 	
-	Sph=Sh(nyears); //Sobrevivencia a inicios de 2018. Sobrevivencia que genera la remoci—n durante el 2018. En tŽrminos de F, es el F que produce la captura del 2018 que multiplicada por el N te genera los que sobreviven al 2019
+	Sph=Sh(nyears); //Sobrevivencia a inicios de 2018. Sobrevivencia que genera la remocion durante el 2018. En terminos de F, es el F que produce la captura del 2018 que multiplicada por el N te genera los que sobreviven al 2019
 	Spm=Sm(nyears);
 	
 	BDp=BD(nyears);
@@ -853,9 +853,9 @@ FUNCTION Eval_CTP
 		YTP(i,j)=sum(CTP);
 		SSBp(i,j)=BDp;
 		BTp(i,j)=Bph+Bpm;
-		// a–o siguiente
+		// anho siguiente
 		Npplus=Nph(nedades)*Sph(nedades);
-		Nph(2,nedades)=++elem_prod(Nph(1,nedades-1),Sph(1,nedades-1)); // Aqui estoy llevando la abundancia del 2018 al 2019, desde la edad 2. Faltar’a un Rec ahora Con el Rec que falta completaria el vector de Rec a inicios de 2019 y falta asignar un F al siguiente ciclo para llevarlo a inicios del 2020
+		Nph(2,nedades)=++elem_prod(Nph(1,nedades-1),Sph(1,nedades-1)); // Aqui estoy llevando la abundancia del 2018 al 2019, desde la edad 2. Faltaria un Rec ahora Con el Rec que falta completaria el vector de Rec a inicios de 2019 y falta asignar un F al siguiente ciclo para llevarlo a inicios del 2020
 		Nph(nedades)+=Npplus;
 		Nph(1)=pRec*exp(log_Ro);//Rec proyecto Con este Rec tengo la abundancia 2019 y falta un F para llevarlo a inicio 2020
 		Npplus=Npm(nedades)*Spm(nedades);
@@ -864,7 +864,7 @@ FUNCTION Eval_CTP
 		Npm(1)=exp(log_Ro)*exp(log_propmR)/(1-exp(log_propmR));
 		
 		// Se considera el mismo F de hembras en los machos
-		Fpbrh=Sel_floh(nyears)*exp(log_Fref(j)); //Cambiando este F // Aqui estoy asumiendo un F. Esto es para la proyecci—n si estoy con full para el œltimo a–o, pq necesitas solamente el F de la captura, del PBR. Aqui necesitamos asumir un F que sea proporcional a la captura que hubo el a–o 2019 o algœn supuesto. Cambiando este F y cambiando el REc proyectado que esta en la fila 860 (pq ahi esta asumiendo un Rec, esta rellenando la primera edad con un REc asumido, en este caso es el Rec promedio por una proporcion). Si se hace un cambio en la combinaci—n de esos dos elementos, del F y del logRo y proyectas solamente 1 a–o, pq quiero pasal al otro, cambiando el log Fref, que ser’a en este caso la mortalidad por pesca asociado a un supuesto de captura, o podria ser una ecuaci—n que resuelva para ese F y cambia el Rec para ver en que momento la poblaci—n Nph es igual a la poblaci—n que tiene a inicios de 2019 el modelo full
+		Fpbrh=Sel_floh(nyears)*exp(log_Fref(j)); //Cambiando este F // Aqui estoy asumiendo un F. Esto es para la proyeccion si estoy con full para el ultimo anho, pq necesitas solamente el F de la captura, del PBR. Aqui necesitamos asumir un F que sea proporcional a la captura que hubo el anho 2019 o algun supuesto. Cambiando este F y cambiando el REc proyectado que esta en la fila 860 (pq ahi esta asumiendo un Rec, esta rellenando la primera edad con un REc asumido, en este caso es el Rec promedio por una proporcion). Si se hace un cambio en la combinacion de esos dos elementos, del F y del logRo y proyectas solamente 1 anho, pq quiero pasar al otro, cambiando el log Fref, que seria en este caso la mortalidad por pesca asociado a un supuesto de captura, o podria ser una ecuacion que resuelva para ese F y cambia el Rec para ver en que momento la poblacion Nph es igual a la poblacion que tiene a inicios de 2019 el modelo full
 		Fpbrm=Sel_flom(nyears)*exp(log_Fref(j));
 		Zpbrh=Fpbrh+Mh;
 		Zpbrm=Fpbrm+Mm;
@@ -873,16 +873,16 @@ FUNCTION Eval_CTP
 	}
  }
  
-// Habria que hacerlo a mano, poner un porcentaje de Reclutamiento y un porcentaje de F para ver como llego al mismo vector que esta en el otro modelo y se puede hacer una gr‡fica e ir combinando para ver si se proyecta de la misma forma. Si llego al mismo, el supuesto para la CBA es casi no relevante pq tendr’a que asumir lo mismo, pero ahi ya se podr’a tener la combinaci—n de elementos que son supuestos para la proyeccion del 2018 onde no hay datos.
+// Habria que hacerlo a mano, poner un porcentaje de Reclutamiento y un porcentaje de F para ver como llego al mismo vector que esta en el otro modelo y se puede hacer una grafica e ir combinando para ver si se proyecta de la misma forma. Si llego al mismo, el supuesto para la CBA es casi no relevante pq tendria que asumir lo mismo, pero ahi ya se podria tener la combinacion de elementos que son supuestos para la proyeccion del 2018 donde no hay datos.
  
 //Este codigo es el que hay que modificar y cambiar nombre
  
- CBA=YTP(2);// es para el a–o proyectado
+ CBA=YTP(2);// es para el anho proyectado
  
  
- // Rutina para la estimaci—n de RPR
+ // Rutina para la estimacion de RPR
  
- Nvp=Nv(nyears);// toma la ultima estimaci—n
+ Nvp=Nv(nyears);// toma la ultima estimacion
 
  for (int i=1;i<=nyear_proy;i++)
  {
