@@ -977,7 +977,7 @@ void model_parameters::Eval_CTP(void)
 	Fpbrm=Fm(nyears);
 	Zpbrh=Zh(nyears);
 	Zpbrm=Zm(nyears);
-	for (int i=1;i<=nyear_proy;i++)
+	for (int i=1;i<=nyear_proy;i++) // El nyear_proy es igual a 2 en el dat
 	{
 		Bph=sum(elem_prod(Nph*Prob_talla_h,Wmed(2)));
 		Bpm=sum(elem_prod(Npm*Prob_talla_m,Wmed(1)));
@@ -1006,9 +1006,9 @@ void model_parameters::Eval_CTP(void)
 		Spm=exp(-1.*Zpbrm);
 	}
  }
- CBA=YTP(2);// es para el a–o proyectado
- // Rutina para la estimaci—n de RPR
- Nvp=Nv(nyears);// toma la ultima estimaci—n
+ CBA=YTP(2);// es para el year proyectado
+ // Rutina para la estimacion de RPR
+ Nvp=Nv(nyears);// toma la ultima estimacion
  for (int i=1;i<=nyear_proy;i++)
  {
 	 Nvplus=Nvp(nedades)*exp(-1.0*Mh);
