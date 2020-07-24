@@ -842,7 +842,7 @@ FUNCTION Eval_CTP
 	Zpbrh=Zh(nyears);
 	Zpbrm=Zm(nyears);
 	
-	for (int i=1;i<=nyear_proy;i++)
+	for (int i=1;i<=nyear_proy;i++) // El nyear_proy es igual a 2 en el dat
 	{
 		Bph=sum(elem_prod(Nph*Prob_talla_h,Wmed(2)));
 		Bpm=sum(elem_prod(Npm*Prob_talla_m,Wmed(1)));
