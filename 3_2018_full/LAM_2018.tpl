@@ -131,8 +131,8 @@ DATA_SECTION
  
  // Simulaciones
  init_int nyear_proy
- init_number pRec // Proporci—n de Reclutamiento para Proyecci—n de capturas ante distintos niveles (1.0 proporcional al reclutamiento medio)
- init_number opt_sim // Opci—n para simular o estimar(0=simula, 1=estima)
+ init_number pRec // Proporcion de Reclutamiento para Proyeccin de capturas ante distintos niveles (1.0 proporcional al reclutamiento medio)
+ init_number opt_sim // Opcion para simular o estimar(0=simula, 1=estima)
  int reporte_mcmc
 
 
@@ -1031,7 +1031,7 @@ REPORT_SECTION
  report << "C_proy" << endl;
  report << YTP << endl;
  report << "Nph" << endl;
- report << Nph << endl;
+ report << Nph << endl; // Para comparar con 2019
 
 
 // ESTIMA nm y CV
