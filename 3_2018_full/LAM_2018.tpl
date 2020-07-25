@@ -1030,6 +1030,8 @@ REPORT_SECTION
  report << SSBp << endl;
  report << "C_proy" << endl;
  report << YTP << endl;
+ report << "Nph" << endl;
+ report << Nph << endl;
 
 
 // ESTIMA nm y CV

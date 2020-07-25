@@ -1161,6 +1161,7 @@ void model_parameters::report(const dvector& gradients)
  report << SSBp << endl;
  report << "C_proy" << endl;
  report << YTP << endl;
+ report << Nph << endl;
  suma1=0; suma2=0;nm1=1;cuenta1=0;
   for (int i=1;i<=nyears;i++)
   {
