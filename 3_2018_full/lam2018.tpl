@@ -7,6 +7,11 @@ GLOBALS_SECTION
  double elapsed_time;
  ofstream mcmc_report("mcmc2.csv");
 
+ #undef depur
+ #undef depuro
+ #define depur(object) cout << #object "\n" << object << endl;
+ #define depuro(object) cout << #object "\n" << object << endl; exit(1);
+
 TOP_OF_MAIN_SECTION
  time(&start);
  arrmblsize = 50000000;
@@ -134,6 +139,17 @@ DATA_SECTION
  init_number pRec // Proporcion de Reclutamiento para Proyeccin de capturas ante distintos niveles (1.0 proporcional al reclutamiento medio)
  init_number opt_sim // Opcion para simular o estimar(0=simula, 1=estima)
  int reporte_mcmc
+
+
+ init_int recOp
+ init_number ajRh
+ init_number ajRm
+ init_int nFt
+ init_vector mf(1,nFt)
+ init_number Fmsy
+ init_number rCaph
+ init_number rCapm
+ init_number offsetCt
 
 
 INITIALIZATION_SECTION
@@ -346,6 +362,8 @@ PARAMETER_SECTION
  sdreport_vector pred_CPUE(1,nyears);
  sdreport_vector pred_Bcru(1,nyears);
  sdreport_vector pred_Desemb(1,nyears);
+ sdreport_vector Yh(1,nyears);
+ sdreport_vector Ym(1,nyears);
 
  sdreport_vector BD(1,nyears);
  sdreport_vector BT(1,nyears);
@@ -355,6 +373,9 @@ PARAMETER_SECTION
 
  sdreport_vector RPRp(1,npbr); // RPR proyectado en la simulacion
  sdreport_vector Restim(1,nyears);//Reclutas hembras
+ sdreport_vector Rfemale(1,nyears);//Reclutas hembras
+ sdreport_vector Rmale(1,nyears);//Reclutas male
+ sdreport_vector Rec(1,nyears);//Reclutas total
  sdreport_vector RPRlp(1,nyears);//
  sdreport_matrix SSBp(1,nyear_proy,1,npbr);// Biomasa desovante proyectada
 
@@ -368,6 +389,49 @@ PARAMETER_SECTION
  sdreport_vector Lhc_pred(1,nyears);
 
  sdreport_vector Frpr(1,nyears);
+ sdreport_vector Fmale(1,nyears);
+ sdreport_vector Ffemale(1,nyears);
+ sdreport_vector Ftotal(1,nyears);
+
+     // new proyecciones
+     matrix Nhp(nyears,nyears+nyear_proy,1,nedades)
+     matrix Nmp(nyears,nyears+nyear_proy,1,nedades)
+     matrix Shp(nyears,nyears+nyear_proy,1,nedades)
+     matrix Smp(nyears,nyears+nyear_proy,1,nedades)
+     matrix Fhp(nyears,nyears+nyear_proy,1,nedades)
+     matrix Fmp(nyears,nyears+nyear_proy,1,nedades)
+     matrix Zhp(nyears,nyears+nyear_proy,1,nedades)
+     matrix Zmp(nyears,nyears+nyear_proy,1,nedades)
+     matrix cehp(nyears,nyears+nyear_proy,1,nedades)
+     matrix cemp(nyears,nyears+nyear_proy,1,nedades)
+
+     vector Rhp(nyears,nyears+nyear_proy)
+     vector Rmp(nyears,nyears+nyear_proy)
+     vector Rtot(nyears,nyears+nyear_proy)
+     vector Fthp(nyears,nyears+nyear_proy)
+     vector Ftmp(nyears,nyears+nyear_proy)
+     vector Ftp(nyears,nyears+nyear_proy)
+     vector SBp(nyears,nyears+nyear_proy)
+     vector BTt(nyears,nyears+nyear_proy)
+     vector Yhp(nyears,nyears+nyear_proy)
+     vector Ymp(nyears,nyears+nyear_proy)
+
+     vector whp(1,ntallas)
+     vector wmp(1,ntallas)
+     vector Sel_flohp(1,nedades)
+     vector Sel_flomp(1,nedades)
+
+     sdreport_matrix Yproy(nyears,nyears+nyear_proy,1,nFt)
+     sdreport_matrix Yhproy(nyears,nyears+nyear_proy,1,nFt)
+     sdreport_matrix Ymproy(nyears,nyears+nyear_proy,1,nFt)
+     sdreport_matrix Fproy(nyears,nyears+nyear_proy,1,nFt)
+     sdreport_matrix Fhproy(nyears,nyears+nyear_proy,1,nFt)
+     sdreport_matrix Fmproy(nyears,nyears+nyear_proy,1,nFt)
+     sdreport_matrix SSBpj(nyears,nyears+nyear_proy,1,nFt)
+     sdreport_matrix BTpj(nyears,nyears+nyear_proy,1,nFt)
+     sdreport_matrix Rtotpj(nyears,nyears+nyear_proy,1,nFt)
+     sdreport_matrix Rhpj(nyears,nyears+nyear_proy,1,nFt)
+     sdreport_matrix Rmpj(nyears,nyears+nyear_proy,1,nFt)
 
 
 PRELIMINARY_CALCS_SECTION
@@ -424,10 +488,10 @@ PROCEDURE_SECTION
  Eval_funcion_objetivo();
 
  if(last_phase){
- Eval_CTP();
- Eval_mcmc();}
-
-
+   sim_Fcte();
+   Eval_CTP();
+   Eval_mcmc();
+ }
 
 FUNCTION Eval_prob_talla_edad
 
@@ -539,6 +603,10 @@ FUNCTION Eval_mortalidades
  Fm=elem_prod(Sel_flom,outer_prod(mfexp(log_Fm),Unos_edad));
  Fh=elem_prod(Sel_floh,outer_prod(mfexp(log_Fh),Unos_edad));
 
+ Fmale = mfexp(log_Fm);
+ Ffemale = mfexp(log_Fh);
+ Ftotal = Fmale + Ffemale;
+
  Zm=Fm+Mm;
  Zh=Fh+Mh;
 
@@ -571,7 +639,7 @@ FUNCTION Eval_abundancia
 
 
  // genero una estructura inicial en equilibrio para el primer a�o
- Neqh(1)=mfexp(log_Ro);//hembras
+ Neqh(1) = mfexp(log_Ro);//hembras
 
  for (j=2;j<=nedades;j++)
  {
@@ -583,7 +651,7 @@ FUNCTION Eval_abundancia
 
 
 
- Neqm(1)=mfexp(log_Ro) * (exp(log_propmR)/(1-exp(log_propmR)));//machos
+ Neqm(1) = mfexp(log_Ro) * (exp(log_propmR)/(1-exp(log_propmR)));//machos
 
 
  for (j=2;j<=nedades;j++)
@@ -615,7 +683,6 @@ FUNCTION Eval_abundancia
 
      Nm(i+1,1)=Rpred(i+1)*mfexp(log_dev_Ro(i))*exp(log_propmR)/(1-exp(log_propmR));  // Reclutas machos
      Nh(i+1,1)=Rpred(i+1)*mfexp(log_dev_Ro(i));// Reclutas hembras
-     Restim=column(Nh,1);
 
 	 // Abundancia edad 2 en adelante
      Nm(i+1)(2,nedades)=++elem_prod(Nm(i)(1,nedades-1),Sm(i)(1,nedades-1));
@@ -627,6 +694,10 @@ FUNCTION Eval_abundancia
      BD(i+1)=sum(elem_prod(elem_prod(Nh(i+1),exp(-dt(1)*Zh(i+1)))*Prob_talla_h,elem_prod(msex,Wmed(2))));
  }
 
+ Restim = column(Nh,1);
+ Rfemale = column(Nh,1);
+ Rmale = column(Nm,1);
+ Rec = Rfemale + Rmale;
 
 FUNCTION Eval_deinteres
 
@@ -684,7 +755,9 @@ FUNCTION Eval_capturas_predichas
 
 
 // vectores de desembarques predichos por a�o
- pred_Desemb=pred_Ctotm*Wmed(1)+pred_Ctoth*Wmed(2);
+ Ym = pred_Ctotm * Wmed(1);
+ Yh = pred_Ctoth * Wmed(2);
+ pred_Desemb= Ym + Yh;
 
 
 // PROPORCIONES  matrices de proporcion de capturas por talla y a�o
@@ -821,10 +894,116 @@ FUNCTION Eval_funcion_objetivo
  f=opt_sim*(sum(likeval)+penalty);
 
 
+FUNCTION sim_Fcte
+   int j,t;
+   for (j=1; j<=nFt; j++){
+     Nhp(nyears) = Nh(nyears);
+     Nmp(nyears) = Nm(nyears);
+     Shp(nyears) = Sh(nyears);
+     Smp(nyears) = Sm(nyears);
+     Fhp(nyears) = Fh(nyears);
+     Fmp(nyears) = Fm(nyears);
+     Zhp(nyears) = Zh(nyears);
+     Zmp(nyears) = Zm(nyears);
+
+     Rhp(nyears)  = Rfemale(nyears);
+     Rmp(nyears)  = Rmale(nyears);
+     Rtot(nyears) = Rec(nyears);
+     Fthp(nyears) = Ffemale(nyears);
+     Ftmp(nyears) = Fmale(nyears);
+     Ftp(nyears)  = Ftotal(nyears);
+
+  	 whp  = Wmed(2);
+  	 wmp  = Wmed(1);
+     SBp(nyears) = BD(nyears);
+     BTt(nyears) = BT(nyears);
+     Sel_flohp   = Sel_floh(nyears);
+     Sel_flomp   = Sel_flom(nyears);
+
+  		for (t=nyears; t<=nyears+nyear_proy-1; t++)
+  		{
+        if (recOp == 1){
+          Rhp(t+1)  = exp(log_Ro);
+          Rmp(t+1)  = exp(log_Ro)*exp(log_propmR)/(1-exp(log_propmR));
+          Rtot(t+1) = Rhp(t+1) + Rmp(t+1);
+        } else if (recOp == 2) {
+          Rhp(t+1) = mean(Rfemale(nyears-5,nyears));
+          Rmp(t+1) = mean(Rmale(nyears-5,nyears));
+          Rtot(t+1) = Rhp(t+1) + Rmp(t+1);
+        } else {
+          Rhp(t+1) = ajRh * Rfemale(nyears);
+          Rmp(t+1) = ajRm * Rmale(nyears);
+          Rtot(t+1) = Rhp(t+1) + Rmp(t+1);
+        }
+
+        Nhp(t+1,1) = Rhp(t+1);
+        Nmp(t+1,1) = Rmp(t+1);
+        Nhp(t+1)(2,nedades) =++ elem_prod(Nhp(t)(1,nedades-1),Shp(t)(1,nedades-1));
+        Nhp(t+1,nedades) = Nhp(t+1,nedades) + Nhp(t,nedades)*Shp(t,nedades);
+        Nmp(t+1)(2,nedades) =++ elem_prod(Nmp(t)(1,nedades-1),Smp(t)(1,nedades-1));
+        Nmp(t+1,nedades) = Nmp(t+1,nedades) + Nmp(t,nedades)*Smp(t,nedades);
+
+        if (t==nyears){
+          Fthp(t+1) = rCaph*Fthp(t);
+          Fhp(t+1)  = Fthp(t+1)*Sel_flohp;
+          Ftmp(t+1) = rCapm*Ftmp(t);
+          Fmp(t+1)  = Ftmp(t+1)*Sel_flomp;
+          Ftp(t+1)  = Fthp(t+1) + Ftmp(t+1);
+        } else {
+          Fthp(t+1) = mf(j)*Fmsy;
+          Fhp(t+1)  = Fthp(t+1)*Sel_flohp;
+          Ftmp(t+1) = mf(j)*Fmsy;
+          Fmp(t+1)  = Ftmp(t+1)*Sel_flomp;
+          Ftp(t+1)  = Fthp(t+1) + Ftmp(t+1);
+        }
+
+        Zhp(t+1) = Fhp(t+1) + Mh;
+        Shp(t+1) = mfexp(-1.0 * Zhp(t+1));
+
+        Zmp(t+1) = Fmp(t+1) + Mm;
+        Smp(t+1) = mfexp(-1.0 * Zmp(t+1));
+
+        SBp(t+1) = sum(elem_prod(elem_prod(Nhp(t+1),exp(-dt(1)*Zhp(t+1)))*Prob_talla_h,elem_prod(msex,whp)));
+        BTt(t+1) = (Nhp(t+1)*Prob_talla_h)*whp + (Nmp(t+1)*Prob_talla_m)*wmp;
+
+        cehp(t+1)  = elem_prod(elem_div(Fhp(t+1),Zhp(t+1)),elem_prod(1.0-Shp(t+1),Nhp(t+1)));
+        Yhp(t+1) 	 = sum(elem_prod(cehp(t+1)*Prob_talla_h,whp));
+
+        cemp(t+1)  = elem_prod(elem_div(Fmp(t+1),Zmp(t+1)),elem_prod(1.0-Smp(t+1),Nmp(t+1)));
+        Ymp(t+1) 	 = sum(elem_prod(cemp(t+1)*Prob_talla_m,wmp));
+
+        Yproy(nyears,j)  = pred_Desemb(nyears);
+        Yproy(t+1,j)     = Yhp(t+1) + Ymp(t+1);
+        Yhproy(nyears,j) = Yh(nyears);
+        Yhproy(t+1,j)    = Yhp(t+1);
+        Ymproy(nyears,j) = Ym(nyears);
+        Ymproy(t+1,j)    = Ymp(t+1);
+
+        Fproy(nyears,j)  = Ftp(nyears);
+  			Fproy(t+1,j)	   = Ftp(t+1);
+        Fhproy(nyears,j) = Ffemale(nyears);
+        Fhproy(t+1,j)    = Fthp(t+1);
+        Fmproy(nyears,j) = Fmale(nyears);
+        Fmproy(t+1,j)    = Ftmp(t+1);
+
+        Rtotpj(nyears,j) = Rec(nyears);
+  			Rtotpj(t+1,j)	   = Rtot(t+1);
+        Rhpj(nyears,j)   = Rfemale(nyears);
+        Rhpj(t+1,j)      = Rhp(t+1);
+        Rmpj(nyears,j)   = Rmale(nyears);
+        Rmpj(t+1,j)      = Rmp(t+1);
+
+        SSBpj(nyears,j)  = SBp(nyears);
+        SSBpj(t+1,j)     = SBp(t+1);
+
+        BTpj(nyears,j)   = BTt(nyears);
+        BTpj(t+1,j)      = BTt(t+1);
+  		}
+   }
+
 
 FUNCTION Eval_CTP
 // se considera el Fpbr de hembras como el representativo factor limitante
-
  for (int j=1;j<=npbr;j++)
  { // son # PBR only!
 	Nph=Nh(nyears); //Abundancia inicios 2018
@@ -874,12 +1053,8 @@ FUNCTION Eval_CTP
 	}
  }
 
-
  CBA=YTP(2);// es para el year proyectado
-
-
  // Rutina para la estimacion de RPR
-
  Nvp=Nv(nyears);// toma la ultima estimacion
 
  for (int i=1;i<=nyear_proy;i++)
@@ -896,6 +1071,134 @@ FUNCTION Eval_CTP
 		 RPRp(i)=SSBp(nyear_proy,i)/SDvp(nyear_proy);
 	 }
 
+
+FUNCTION Write_proj
+ int k, i;
+ adstring report_name;
+   {
+     report_name = "proyecciones.lam";
+     ofstream R_report(report_name);
+
+     R_report << "Debug" << endl;
+     R_report << offsetCt << endl;
+
+     R_report << "Rec_male" << endl; for (int i=1; i<=nyears; i++){
+       double lb=value(Rmale(i)/exp(2.*sqrt(log(1+square(Rmale.sd(i))/square(Rmale(i))))));
+       double ub=value(Rmale(i)*exp(2.*sqrt(log(1+square(Rmale.sd(i))/square(Rmale(i))))));
+       R_report << i+1984 << " " << Rmale(i) << " " << Rmale.sd(i) << " " << lb << " " << ub << endl;
+     }
+
+     R_report << "Rec_male_proj" << endl;
+     R_report << Rmpj << endl;
+
+     R_report << "Rec_female" << endl; for (int i=1; i<=nyears; i++){
+       double lb=value(Rfemale(i)/exp(2.*sqrt(log(1+square(Rfemale.sd(i))/square(Rfemale(i))))));
+       double ub=value(Rfemale(i)*exp(2.*sqrt(log(1+square(Rfemale.sd(i))/square(Rfemale(i))))));
+       R_report << i+1984 << " " << Rfemale(i) << " " << Rfemale.sd(i) << " " << lb << " " << ub << endl;
+     }
+
+     R_report << "Rec_female_proj" << endl;
+     R_report << Rhpj << endl;
+
+     R_report << "Reclutas" << endl; for (int i=1; i<=nyears; i++){
+       double lb=value(Rec(i)/exp(2.*sqrt(log(1+square(Rec.sd(i))/square(Rec(i))))));
+       double ub=value(Rec(i)*exp(2.*sqrt(log(1+square(Rec.sd(i))/square(Rec(i))))));
+       R_report << i+1984 << " " << Rec(i) << " " << Rec.sd(i) << " " << lb << " " << ub << endl;
+     }
+
+     R_report << "Rec_tot_proj" << endl;
+     R_report << Rtotpj << endl;
+
+     R_report << "BT" << endl; for (int i=1; i<=nyears; i++){
+       double lb=value(BT(i)/exp(2.*sqrt(log(1+square(BT.sd(i))/square(BT(i))))));
+       double ub=value(BT(i)*exp(2.*sqrt(log(1+square(BT.sd(i))/square(BT(i))))));
+       R_report << i+1984 << " " << BT(i) << " " << BT.sd(i) << " " << lb << " " << ub << endl;
+     }
+
+     R_report << "BT_proj" << endl;
+     R_report << BTpj << endl;
+
+     R_report << "SSB" << endl; for (int i=1; i<=nyears; i++){
+       double lb=value(BD(i)/exp(2.*sqrt(log(1+square(BD.sd(i))/square(BD(i))))));
+       double ub=value(BD(i)*exp(2.*sqrt(log(1+square(BD.sd(i))/square(BD(i))))));
+       R_report << i+1984 << " " << BD(i) << " " << BD.sd(i) << " " << lb << " " << ub << endl;
+     }
+
+     R_report << "SSB_proj" << endl;
+     R_report << SSBpj << endl;
+
+     R_report << "F_female" << endl; for (int i=1; i<=nyears; i++){
+       double lb=value(Ffemale(i)/exp(2.*sqrt(log(1+square(Ffemale.sd(i))/square(Ffemale(i))))));
+       double ub=value(Ffemale(i)*exp(2.*sqrt(log(1+square(Ffemale.sd(i))/square(Ffemale(i))))));
+       R_report << i+1984 << " " << Ffemale(i) << " " << Ffemale.sd(i) << " " << lb << " " << ub << endl;
+     }
+
+     R_report << "F_female_proj" << endl;
+     R_report << Fhproy << endl;
+
+     R_report << "F_male" << endl; for (int i=1; i<=nyears; i++){
+       double lb=value(Fmale(i)/exp(2.*sqrt(log(1+square(Fmale.sd(i))/square(Fmale(i))))));
+       double ub=value(Fmale(i)*exp(2.*sqrt(log(1+square(Fmale.sd(i))/square(Fmale(i))))));
+       R_report << i+1984 << " " << Fmale(i) << " " << Fmale.sd(i) << " " << lb << " " << ub << endl;
+     }
+
+     R_report << "F_male_proj" << endl;
+     R_report << Fmproy << endl;
+
+     R_report << "F_total" << endl; for (int i=1; i<=nyears; i++){
+       double lb=value(Ftotal(i)/exp(2.*sqrt(log(1+square(Ftotal.sd(i))/square(Ftotal(i))))));
+       double ub=value(Ftotal(i)*exp(2.*sqrt(log(1+square(Ftotal.sd(i))/square(Ftotal(i))))));
+       R_report << i+1984 << " " << Ftotal(i) << " " << Ftotal.sd(i) << " " << lb << " " << ub << endl;
+     }
+
+     R_report << "F_total_proy" << endl;
+     R_report << Fproy << endl;
+
+     R_report << "Y_female" << endl; for (int i=1; i<=nyears; i++){
+       double lb=value(Yh(i)/exp(2.*sqrt(log(1+square(Yh.sd(i))/square(Yh(i))))));
+       double ub=value(Yh(i)*exp(2.*sqrt(log(1+square(Yh.sd(i))/square(Yh(i))))));
+       R_report << i+1984 << " " << Yh(i) << " " << Yh.sd(i) << " " << lb << " " << ub << endl;
+     }
+
+      R_report << "Y_female_proj" << endl;
+      R_report << Yhproy << endl;
+
+
+     R_report << "Y_male" << endl; for (int i=1; i<=nyears; i++){
+       double lb=value(Ym(i)/exp(2.*sqrt(log(1+square(Ym.sd(i))/square(Ym(i))))));
+       double ub=value(Ym(i)*exp(2.*sqrt(log(1+square(Ym.sd(i))/square(Ym(i))))));
+       R_report << i+1984 << " " << Ym(i) << " " << Ym.sd(i) << " " << lb << " " << ub << endl;
+     }
+
+      R_report << "Y_male_proj" << endl;
+      R_report << Ymproy << endl;
+
+
+     R_report << "Y_total" << endl; for (int i=1; i<=nyears; i++){
+       double lb=value(pred_Desemb(i)/exp(2.*sqrt(log(1+square(pred_Desemb.sd(i))/square(pred_Desemb(i))))));
+       double ub=value(pred_Desemb(i)*exp(2.*sqrt(log(1+square(pred_Desemb.sd(i))/square(pred_Desemb(i))))));
+       R_report << i+1984 << " " << pred_Desemb(i) << " " << pred_Desemb.sd(i) << " " << lb << " " << ub << endl;
+     }
+
+      R_report << "Y_total_proj" << endl;
+      R_report << Yproy << endl;
+
+     R_report<<"SSB_fut"<< endl;
+     for (k=1; k<=nFt; k++){
+       for (i=nyears; i<=nyears+nyear_proy; i++)
+       {
+         if (k==1){
+           R_report << k << " " << i+1984 << " " << 0 << " " << 0 << " " << 0 << " " << 0 << endl;
+         } else {
+           double lb=value(SSBpj(i,k)/exp(2.*sqrt(log(1+square(SSBpj.sd(i,k))/square(SSBpj(i,k))))));
+           double ub=value(SSBpj(i,k)*exp(2.*sqrt(log(1+square(SSBpj.sd(i,k))/square(SSBpj(i,k))))));
+           R_report << k << " " << i+1984 << " " << SSBpj(i,k) << " " << SSBpj.sd(i,k) << " " << lb << " " << ub << endl;
+         }
+       }
+     }
+
+     R_report.close();
+   }
 
 
 REPORT_SECTION
@@ -1103,18 +1406,19 @@ FUNCTION Eval_mcmc
 
 
 FINAL_SECTION
+  Write_proj();
 
- time(&finish);
- elapsed_time=difftime(finish,start);
- hour=long(elapsed_time)/3600;
- minute=long(elapsed_time)%3600/60;
- second=(long(elapsed_time)%3600)%60;
- cout<<endl<<endl<<"*********************************************"<<endl;
- cout<<"--Start time:  "<<ctime(&start)<<endl;
- cout<<"--Finish time: "<<ctime(&finish)<<endl;
- cout<<"--Runtime: ";
- cout<<hour<<" hours, "<<minute<<" minutes, "<<second<<" seconds"<<endl;
- cout<<"*********************************************"<<endl;
+  time(&finish);
+  elapsed_time=difftime(finish,start);
+  hour=long(elapsed_time)/3600;
+  minute=long(elapsed_time)%3600/60;
+  second=(long(elapsed_time)%3600)%60;
+  cout<<endl<<endl<<"*********************************************"<<endl;
+  cout<<"--Start time:  "<<ctime(&start)<<endl;
+  cout<<"--Finish time: "<<ctime(&finish)<<endl;
+  cout<<"--Runtime: ";
+  cout<<hour<<" hours, "<<minute<<" minutes, "<<second<<" seconds"<<endl;
+  cout<<"*********************************************"<<endl;
 
 // cout<< " " << RPRp << endl; exit(0);
 
