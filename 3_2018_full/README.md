@@ -7,3 +7,5 @@
 - __Linea 622 y 625__: Buscar consistencia con grupos plus definidos en la condicion inicial, lineas 582 y 594.
 
 - __Eliminar Lineas__: 692, 693, 703. Repite la construccion de la BD
+
+_ Cambio para corroborar_
