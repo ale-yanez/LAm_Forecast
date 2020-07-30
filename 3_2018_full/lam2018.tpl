@@ -433,6 +433,8 @@ PARAMETER_SECTION
      sdreport_matrix Rhpj(nyears,nyears+nyear_proy,1,nFt)
      sdreport_matrix Rmpj(nyears,nyears+nyear_proy,1,nFt)
 
+     number fmsy
+
 
 PRELIMINARY_CALCS_SECTION
 
@@ -483,11 +485,11 @@ PROCEDURE_SECTION
  Eval_biomasas();
  Eval_capturas_predichas();
  Eval_indices();
- Eval_PBR();
  Eval_logverosim();
  Eval_funcion_objetivo();
 
  if(last_phase){
+   Eval_PBR();
    sim_Fcte();
    Eval_CTP();
    Eval_mcmc();
@@ -812,7 +814,7 @@ FUNCTION Eval_PBR
  Fpbrh=Sel_floh(nyears)*exp(log_Fref(i));
  Zpbrh=Fpbrh+Mh;
 
- Neqh(1)=mfexp(log_Ro);//hembras
+ Neqh(1) = mfexp(log_Ro);//hembras
 
  	for (int j=2;j<=nedades;j++)
 	{
@@ -823,10 +825,12 @@ FUNCTION Eval_PBR
 
  BD_lp=sum(elem_prod(elem_prod(Neqh,exp(-dt(1)*Zpbrh))*Prob_talla_h,elem_prod(msex,Wmed(2))));
 
- ratio_pbr(i)=BD_lp/SSBo;
+ ratio_pbr(i)=BD_lp/SSBo; // ratio Fspr = 0.45
  }
 
- Frpr=mfexp(log_Fh)/mfexp(log_Fref(3));
+ Frpr=mfexp(log_Fh)/mfexp(log_Fref(2));
+
+ fmsy = mfexp(log_Fref(2));
 
 
 
@@ -944,15 +948,15 @@ FUNCTION sim_Fcte
         Nmp(t+1,nedades) = Nmp(t+1,nedades) + Nmp(t,nedades)*Smp(t,nedades);
 
         if (t==nyears){
-          Fthp(t+1) = rCaph*Fthp(t);
+          Fthp(t+1) = rCaph*Fthp(t); // C(t+1) = f(F(t),rCap)  // F(t+1)=f(C(t+1))
           Fhp(t+1)  = Fthp(t+1)*Sel_flohp;
           Ftmp(t+1) = rCapm*Ftmp(t);
           Fmp(t+1)  = Ftmp(t+1)*Sel_flomp;
           Ftp(t+1)  = Fthp(t+1) + Ftmp(t+1);
         } else {
-          Fthp(t+1) = mf(j)*Fmsy;
+          Fthp(t+1) = mf(j)*mfexp(log_Fref(2));
           Fhp(t+1)  = Fthp(t+1)*Sel_flohp;
-          Ftmp(t+1) = mf(j)*Fmsy;
+          Ftmp(t+1) = mf(j)*mfexp(log_Fref(2));
           Fmp(t+1)  = Ftmp(t+1)*Sel_flomp;
           Ftp(t+1)  = Fthp(t+1) + Ftmp(t+1);
         }
@@ -1078,6 +1082,9 @@ FUNCTION Write_proj
    {
      report_name = "proyecciones.lam";
      ofstream R_report(report_name);
+
+     R_report << "Fmsy" << endl;
+     R_report << fmsy << endl;
 
      R_report << "Debug" << endl;
      R_report << offsetCt << endl;
