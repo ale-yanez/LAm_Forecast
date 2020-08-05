@@ -17,4 +17,4 @@
 - [ ] Proyectar con esa captura
 - [ ] Graficar con distintas opciones de reclutamiento (opt 1, 2 y 3) observar incidencia de Rec en proyecciones
 - [ ] Mismos pasos para LAm_2017
-- [ ] Implementar mismo codigo en LAmS.tpl
+- [ ] Implementar mismo codigo en LAmS.tpl 
