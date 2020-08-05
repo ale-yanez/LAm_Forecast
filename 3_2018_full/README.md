@@ -8,4 +8,13 @@
 
 - __Eliminar Lineas__: 692, 693, 703. Repite la construccion de la BD
 
-_ Cambio para corroborar_
+
+### Task List
+
+:nerd_face:
+
+- [ ] Buscar alcanzar captura 2019 con mayor detalle desde modelo 2018
+- [ ] Proyectar con esa captura
+- [ ] Graficar con distintas opciones de reclutamiento (opt 1, 2 y 3) observar incidencia de Rec en proyecciones
+- [ ] Mismos pasos para LAm_2017
+- [ ] Implementar mismo codigo en LAmS.tpl

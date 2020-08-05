@@ -141,10 +141,10 @@ DATA_SECTION
  int reporte_mcmc
 
 
- init_int recOp
+ init_int recOp // Opcion reclutamiento (1, 2 o 3)
  init_number ajRh
  init_number ajRm
- init_int nFt
+ init_int nFt // multiplicadores de FMSY
  init_vector mf(1,nFt)
  init_number Fmsy
  init_number rCaph
@@ -394,44 +394,44 @@ PARAMETER_SECTION
  sdreport_vector Ftotal(1,nyears);
 
      // new proyecciones
-     matrix Nhp(nyears,nyears+nyear_proy,1,nedades)
-     matrix Nmp(nyears,nyears+nyear_proy,1,nedades)
-     matrix Shp(nyears,nyears+nyear_proy,1,nedades)
-     matrix Smp(nyears,nyears+nyear_proy,1,nedades)
-     matrix Fhp(nyears,nyears+nyear_proy,1,nedades)
-     matrix Fmp(nyears,nyears+nyear_proy,1,nedades)
-     matrix Zhp(nyears,nyears+nyear_proy,1,nedades)
-     matrix Zmp(nyears,nyears+nyear_proy,1,nedades)
-     matrix cehp(nyears,nyears+nyear_proy,1,nedades)
-     matrix cemp(nyears,nyears+nyear_proy,1,nedades)
+     matrix Nhp(nyears,nyears+nyear_proy,1,nedades);
+     matrix Nmp(nyears,nyears+nyear_proy,1,nedades);
+     matrix Shp(nyears,nyears+nyear_proy,1,nedades);
+     matrix Smp(nyears,nyears+nyear_proy,1,nedades);
+     matrix Fhp(nyears,nyears+nyear_proy,1,nedades);
+     matrix Fmp(nyears,nyears+nyear_proy,1,nedades);
+     matrix Zhp(nyears,nyears+nyear_proy,1,nedades);
+     matrix Zmp(nyears,nyears+nyear_proy,1,nedades);
+     matrix cehp(nyears,nyears+nyear_proy,1,nedades);
+     matrix cemp(nyears,nyears+nyear_proy,1,nedades);
 
-     vector Rhp(nyears,nyears+nyear_proy)
-     vector Rmp(nyears,nyears+nyear_proy)
-     vector Rtot(nyears,nyears+nyear_proy)
-     vector Fthp(nyears,nyears+nyear_proy)
-     vector Ftmp(nyears,nyears+nyear_proy)
-     vector Ftp(nyears,nyears+nyear_proy)
-     vector SBp(nyears,nyears+nyear_proy)
-     vector BTt(nyears,nyears+nyear_proy)
-     vector Yhp(nyears,nyears+nyear_proy)
-     vector Ymp(nyears,nyears+nyear_proy)
+     vector Rhp(nyears,nyears+nyear_proy);
+     vector Rmp(nyears,nyears+nyear_proy);
+     vector Rtot(nyears,nyears+nyear_proy);
+     vector Fthp(nyears,nyears+nyear_proy);
+     vector Ftmp(nyears,nyears+nyear_proy);
+     vector Ftp(nyears,nyears+nyear_proy);
+     vector SBp(nyears,nyears+nyear_proy);
+     vector BTt(nyears,nyears+nyear_proy);
+     vector Yhp(nyears,nyears+nyear_proy);
+     vector Ymp(nyears,nyears+nyear_proy);
 
-     vector whp(1,ntallas)
-     vector wmp(1,ntallas)
-     vector Sel_flohp(1,nedades)
-     vector Sel_flomp(1,nedades)
+     vector whp(1,ntallas);
+     vector wmp(1,ntallas);
+     vector Sel_flohp(1,nedades);
+     vector Sel_flomp(1,nedades);
 
-     sdreport_matrix Yproy(nyears,nyears+nyear_proy,1,nFt)
-     sdreport_matrix Yhproy(nyears,nyears+nyear_proy,1,nFt)
-     sdreport_matrix Ymproy(nyears,nyears+nyear_proy,1,nFt)
-     sdreport_matrix Fproy(nyears,nyears+nyear_proy,1,nFt)
-     sdreport_matrix Fhproy(nyears,nyears+nyear_proy,1,nFt)
-     sdreport_matrix Fmproy(nyears,nyears+nyear_proy,1,nFt)
-     sdreport_matrix SSBpj(nyears,nyears+nyear_proy,1,nFt)
-     sdreport_matrix BTpj(nyears,nyears+nyear_proy,1,nFt)
-     sdreport_matrix Rtotpj(nyears,nyears+nyear_proy,1,nFt)
-     sdreport_matrix Rhpj(nyears,nyears+nyear_proy,1,nFt)
-     sdreport_matrix Rmpj(nyears,nyears+nyear_proy,1,nFt)
+     sdreport_matrix Yproy(nyears,nyears+nyear_proy,1,nFt);
+     sdreport_matrix Yhproy(nyears,nyears+nyear_proy,1,nFt);
+     sdreport_matrix Ymproy(nyears,nyears+nyear_proy,1,nFt);
+     sdreport_matrix Fproy(nyears,nyears+nyear_proy,1,nFt);
+     sdreport_matrix Fhproy(nyears,nyears+nyear_proy,1,nFt);
+     sdreport_matrix Fmproy(nyears,nyears+nyear_proy,1,nFt);
+     sdreport_matrix SSBpj(nyears,nyears+nyear_proy,1,nFt);
+     sdreport_matrix BTpj(nyears,nyears+nyear_proy,1,nFt);
+     sdreport_matrix Rtotpj(nyears,nyears+nyear_proy,1,nFt);
+     sdreport_matrix Rhpj(nyears,nyears+nyear_proy,1,nFt);
+     sdreport_matrix Rmpj(nyears,nyears+nyear_proy,1,nFt);
 
 
 PRELIMINARY_CALCS_SECTION
@@ -603,7 +603,7 @@ FUNCTION Eval_mortalidades
  Fm=elem_prod(Sel_flom,outer_prod(mfexp(log_Fm),Unos_edad));
  Fh=elem_prod(Sel_floh,outer_prod(mfexp(log_Fh),Unos_edad));
 
- Fmale = mfexp(log_Fm);
+ Fmale = mfexp(log_Fm); //vectores anuales de F
  Ffemale = mfexp(log_Fh);
  Ftotal = Fmale + Ffemale;
 
@@ -671,7 +671,7 @@ FUNCTION Eval_abundancia
 
  Rpred(1)=mfexp(log_Ro);//
 
- // se estima la sobrevivencia por edad(a+1) y a�o(t+1)
+ // se estima la sobrevivencia por edad(a+1) y anho(t+1)
  for (i=1;i<nyears;i++)
  {
      Rpred(i+1)=mfexp(log_Ro);//
@@ -704,7 +704,7 @@ FUNCTION Eval_deinteres
 // Rutina para calcular RPR
  Nv=Nh;// solo para empezar los calculos
 
-// se estima la sobrevivencia por edad(a+1) y a�o(t+1)
+// se estima la sobrevivencia por edad(a+1) y anho(t+1)
  for (int i=1;i<nyears;i++)
  {
      Nv(i+1)(2,nedades)=++Nv(i)(1,nedades-1)*exp(-1.0*Mh);
@@ -754,8 +754,8 @@ FUNCTION Eval_capturas_predichas
  prop_hpred = elem_div(rowsum(pred_Ctoth),rowsum(pred_Ctoth+pred_Ctotm+1e-10));
 
 
-// vectores de desembarques predichos por a�o
- Ym = pred_Ctotm * Wmed(1);
+// vectores de desembarques predichos por anho
+ Ym = pred_Ctotm * Wmed(1); //desembarques separados por sexos
  Yh = pred_Ctoth * Wmed(2);
  pred_Desemb= Ym + Yh;
 
