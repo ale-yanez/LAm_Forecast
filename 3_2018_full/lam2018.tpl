@@ -901,9 +901,9 @@ FUNCTION Eval_funcion_objetivo
 FUNCTION sim_Fcte
    int j,t;
    for (j=1; j<=nFt; j++){
-     Nhp(nyears) = Nh(nyears);
+     Nhp(nyears) = Nh(nyears); // nyears = 2018
      Nmp(nyears) = Nm(nyears);
-     Shp(nyears) = Sh(nyears);
+     Shp(nyears) = Sh(nyears); // Shp = 2018
      Smp(nyears) = Sm(nyears);
      Fhp(nyears) = Fh(nyears);
      Fmp(nyears) = Fm(nyears);
@@ -924,7 +924,7 @@ FUNCTION sim_Fcte
      Sel_flohp   = Sel_floh(nyears);
      Sel_flomp   = Sel_flom(nyears);
 
-  		for (t=nyears; t<=nyears+nyear_proy-1; t++)
+  		for (t=nyears; t<=nyears+nyear_proy-1; t++)  // t=2018 2019 2020
   		{
         if (recOp == 1){
           Rhp(t+1)  = exp(log_Ro);
