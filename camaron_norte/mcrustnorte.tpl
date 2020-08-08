@@ -9,14 +9,14 @@ GLOBALS_SECTION
 
 TOP_OF_MAIN_SECTION
  time(&start);
- arrmblsize = 50000000; 
- gradient_structure::set_GRADSTACK_BUFFER_SIZE(1.e7); 
- gradient_structure::set_CMPDIF_BUFFER_SIZE(1.e7); 
- gradient_structure::set_MAX_NVAR_OFFSET(5000); 
- gradient_structure::set_NUM_DEPENDENT_VARIABLES(5000); 
+ arrmblsize = 50000000;
+ gradient_structure::set_GRADSTACK_BUFFER_SIZE(1.e7);
+ gradient_structure::set_CMPDIF_BUFFER_SIZE(1.e7);
+ gradient_structure::set_MAX_NVAR_OFFSET(5000);
+ gradient_structure::set_NUM_DEPENDENT_VARIABLES(5000);
 
 DATA_SECTION
- init_int ntime  
+ init_int ntime
  init_int nedades
  init_int ntallas
 
@@ -97,7 +97,7 @@ DATA_SECTION
  init_int    opt_qc
 
  init_int    optSf_fase
- 
+
  init_int    opt_Lo
  init_int    opt_cva
  init_int    opt_M
@@ -115,7 +115,9 @@ DATA_SECTION
 
  init_number opt_sim
 
- int reporte_mcmc 
+ init_int rmed
+
+ int reporte_mcmc
 
 INITIALIZATION_SECTION
 
@@ -125,13 +127,13 @@ INITIALIZATION_SECTION
   log_cv_edadh   log_cva_priorh
   log_pRm        -0.69314
 
-  log_L50m        log_L50fpriorm 
-  log_sigma1m     log_s1priorm 
-  log_sigma2m     log_s2priorm 
+  log_L50m        log_L50fpriorm
+  log_sigma1m     log_s1priorm
+  log_sigma2m     log_s2priorm
 
-  log_L50h        log_L50fpriorh 
-  log_sigma1h     log_s1priorh 
-  log_sigma2h     log_s2priorh 
+  log_L50h        log_L50fpriorh
+  log_sigma1h     log_s1priorh
+  log_sigma2h     log_s2priorh
 
   log_Mm           log_M_priorm
   log_Mh           log_M_priorh
@@ -141,20 +143,20 @@ PARAMETER_SECTION
 
 
 
-// selectividad paramétrica a la talla común
-// init_bounded_vector log_L50f(1,nbloques1,-5,8,opt1_fase)  
- 
+// selectividad paramï¿½trica a la talla comï¿½n
+// init_bounded_vector log_L50f(1,nbloques1,-5,8,opt1_fase)
+
 
 // init_3darray log_parSf(1,2,1,2,1,nbloques1,optSf_fase)
 
 //Selectividad flota machos
- init_vector log_L50m(1,nbloques1,optSf_fase)  
+ init_vector log_L50m(1,nbloques1,optSf_fase)
  init_bounded_vector log_sigma1m(1,nbloques1,0.5*log_s1priorm,1.2*log_s1priorm,optSf_fase)
 // init_vector log_sigma1m(1,nbloques1,optSf_fase)
  init_vector log_sigma2m(1,nbloques1,optSf_fase)
 
 //Selectividad flota hembras
- init_vector log_L50h(1,nbloques1,optSf_fase)  
+ init_vector log_L50h(1,nbloques1,optSf_fase)
  init_bounded_vector log_sigma1h(1,nbloques1,0.5*log_s1priorh,1.2*log_s1priorh,optSf_fase)
 // init_vector log_sigma1h(1,nbloques1,optSf_fase)
  init_vector log_sigma2h(1,nbloques1,optSf_fase)
@@ -187,7 +189,7 @@ PARAMETER_SECTION
 
 //---------------------------------------------------------------------------------
 
-//Defino las variables de estado 
+//Defino las variables de estado
  sdreport_vector BMflo(1,ntime)
 // vector BMflo(1,ntime)
  vector BMcru(1,ntime)
@@ -332,18 +334,28 @@ PARAMETER_SECTION
  number Nvplus;
  vector SDvp(1,ntime_sim);
  sdreport_vector RPRlp(1,ntime) // RPR en equilibrio largo plazo
- 
- sdreport_vector CBA(1,npbr+1) // 
+
+ sdreport_vector CBA(1,npbr+1) //
 
  objective_function_value f
-  
- sdreport_vector BD(1,ntime) // 
- sdreport_vector BT(1,ntime) // 
- sdreport_vector RPR(1,ntime) // 
- 
+
+ sdreport_vector BD(1,ntime) //
+ sdreport_vector BT(1,ntime) //
+ sdreport_vector RPR(1,ntime) //
+
  sdreport_number SSBo
  sdreport_vector RPRp(1,npbr+1) // RPR proyectado en la simulacion
  sdreport_vector RecH(1,ntime)
+
+ // New variables for tac_proj FUNCTION
+ matrix tac_h(1,ntime_sim,1,npbr+1)
+ matrix tac_m(1,ntime_sim,1,npbr+1)
+ matrix tac_t(1,ntime_sim,1,npbr+1)
+ matrix ssb_h(1,ntime_sim,1,npbr+1)
+ matrix ssb_m(1,ntime_sim,1,npbr+1)
+ matrix ssb_t(1,ntime_sim,1,npbr+1)
+ number Frefh
+ number Frefm
 
 PRELIMINARY_CALCS_SECTION
 
@@ -365,11 +377,11 @@ PRELIMINARY_CALCS_SECTION
  kh=Par_bio(2,2);
  // Mm=Par_bio(1,5);
  // Mh=Par_bio(2,5);
- 
+
 
  Unos_edad=1;// lo uso en  operaciones matriciales con la edad
- Unos_anos=1;// lo uso en operaciones matriciales con el año
- Unos_tallas=1;// lo uso en operaciones matriciales con el año
+ Unos_anos=1;// lo uso en operaciones matriciales con el aï¿½o
+ Unos_tallas=1;// lo uso en operaciones matriciales con el aï¿½o
 
 RUNTIME_SECTION
  // maximum_function_evaluations 500,2000,5000
@@ -398,6 +410,7 @@ PROCEDURE_SECTION
 
  if(last_phase){
  Eval_CTP();
+ tac_proj();
  }
 
 
@@ -498,7 +511,7 @@ FUNCTION Eval_mortalidades
 
  Mm=exp(log_Mm);
  Mh=exp(log_Mh);
- 
+
  Fm=elem_prod(Sel_m,outer_prod(mfexp(log_Fm),Unos_edad));
  Fh=elem_prod(Sel_h,outer_prod(mfexp(log_Fh),Unos_edad));
 
@@ -526,9 +539,9 @@ FUNCTION Eval_abundancia
 // Stock-recluta
 
  alfa=4*h*exp(log_Ro)/(5*h-1);//
- beta=(1-h)*SSBo/(5*h-1);//  
+ beta=(1-h)*SSBo/(5*h-1);//
 
-// genero una estructura inicial en equilibrio para el primer año
+// genero una estructura inicial en equilibrio para el primer aï¿½o
 
  Neqh(1)=mfexp(log_Ro);//hembras
  for (j=2;j<=nedades;j++)
@@ -559,17 +572,17 @@ FUNCTION Eval_abundancia
  Rpred(1)=mfexp(log_Ro);//
 
 
-// se estima la sobrevivencia por edad(a+1) y año(t+1)
+// se estima la sobrevivencia por edad(a+1) y aï¿½o(t+1)
  for (i=1;i<ntime;i++)
  {
-     Rpred(i+1)=mfexp(log_Ro);// 
+     Rpred(i+1)=mfexp(log_Ro);//
      if(i>=edades(1)){
      Rpred(i+1)=alfa*BD(i-edades(1)+1)/(beta+BD(i-edades(1)+1));}// Reclutamiento estimado por un modelo B&H hembras
 
-     Nm(i+1,1)=Rpred(i+1)*mfexp(dev_log_Ro(i))*exp(log_pRm)/(1-exp(log_pRm));  // Reclutas machos   
+     Nm(i+1,1)=Rpred(i+1)*mfexp(dev_log_Ro(i))*exp(log_pRm)/(1-exp(log_pRm));  // Reclutas machos
      Nh(i+1,1)=Rpred(i+1)*mfexp(dev_log_Ro(i));// Reclutas hembras
      RecH=column(Nh,1);
-     
+
      Nm(i+1)(2,nedades)=++elem_prod(Nm(i)(1,nedades-1),Sm(i)(1,nedades-1));
      Nm(i+1,nedades)=Nm(i+1,nedades)+Nm(i,nedades)*Sm(i,nedades);// grupo plus
 
@@ -584,7 +597,7 @@ FUNCTION Eval_deinteres
 // Rutina para calcular RPR
  Nv=Nh;// solo para empezar los calculos
 
-// se estima la sobrevivencia por edad(a+1) y año(t+1)
+// se estima la sobrevivencia por edad(a+1) y aï¿½o(t+1)
  for (int i=1;i<ntime;i++)
  {
      Nv(i+1)(2,nedades)=++Nv(i)(1,nedades-1)*exp(-1.0*Mh);
@@ -601,10 +614,10 @@ FUNCTION Eval_deinteres
 
 
 FUNCTION Eval_biomasas
- 
+
  NMD=elem_prod(Nh,mfexp(-dt(1)*Zh))*Prob_talla_h;
  NMD=elem_prod(NMD,outer_prod(Unos_anos,msex));
- 
+
  NVflo_m=elem_prod(elem_prod(Nm,mfexp(-dt(2)*(Zm))),Sel_m)*Prob_talla_m;
  NVflo_h=elem_prod(elem_prod(Nh,mfexp(-dt(2)*(Zh))),Sel_h)*Prob_talla_h;
 
@@ -616,26 +629,26 @@ FUNCTION Eval_biomasas
  BMflo=NVflo_m*Wmed(1)+NVflo_h*Wmed(2);
  BMcru=NVcru_m*Wmed(1)+NVcru_h*Wmed(2);
 
- BT=(Nm*Prob_talla_m)*Wmed(1)+(Nh*Prob_talla_h)*Wmed(2);  
+ BT=(Nm*Prob_talla_m)*Wmed(1)+(Nh*Prob_talla_h)*Wmed(2);
 
 
 FUNCTION Eval_capturas_predichas
 
-// matrices de capturas predichas por edad y año
+// matrices de capturas predichas por edad y aï¿½o
  pred_Ctot_am=elem_prod(elem_div(Fm,Zm),elem_prod(1.-Sm,Nm));
  pred_Ctotm=pred_Ctot_am*Prob_talla_m;
 
  pred_Ctot_ah=elem_prod(elem_div(Fh,Zh),elem_prod(1.-Sh,Nh));
  pred_Ctoth=pred_Ctot_ah*Prob_talla_h;
 
-// Proporción total anual de hembras en las capturas
+// Proporciï¿½n total anual de hembras en las capturas
  prop_hpred = elem_div(rowsum(pred_Ctoth),rowsum(pred_Ctoth+pred_Ctotm+1e-10));
 
-// vectores de desembarques predichos por año
+// vectores de desembarques predichos por aï¿½o
  pred_Desemb=pred_Ctotm*Wmed(1)+pred_Ctoth*Wmed(2);
 
 
-// PROPORCIONES  matrices de proporcion de capturas por talla y año
+// PROPORCIONES  matrices de proporcion de capturas por talla y aï¿½o
  pobs_m=elem_div(Ctot(1),outer_prod(rowsum(Ctot(1)+1e-10),Unos_tallas));
  ppred_m=elem_div(pred_Ctotm,outer_prod(rowsum(pred_Ctotm+1e-10),Unos_tallas));
 
@@ -651,7 +664,7 @@ FUNCTION Eval_capturas_predichas
 
 
 FUNCTION Eval_indices
- 
+
 
    for (int i=1;i<=ntime;i++){
       for (int j=1;j<=nqbloques;j++){
@@ -760,6 +773,60 @@ FUNCTION Eval_funcion_objetivo
 
 //---------------------------------------------------------------------
 
+FUNCTION tac_proj
+ int j,i;
+
+ for (j=1; j<=npbr+1; j++){
+   Nph = Nh(ntime);
+   Npm = Nm(ntime);
+   Sph = Sh(ntime);
+   Spm = Sm(ntime);
+
+   for (i=1; i<=ntime_sim; i++){
+     Nph(2,nedades) =++ elem_prod(Nph(1,nedades-1),Sph(1,nedades-1));
+     Nph(nedades) += Nph(nedades)*Sph(nedades);
+     if(rmed){ // se lee desde *.dat, si es = 1 trabaja log_Ro, si no, trabaja R(ntime)
+       Nph(1) = exp(log_Ro);
+     } else {
+       Nph(1) = Nh(ntime,1);
+     }
+
+     Npm(2,nedades) =++ elem_prod(Npm(1,nedades-1),Spm(1,nedades-1));
+     Npm(nedades) += Npm(nedades)*Spm(nedades);
+     Npm(1) = exp(log_Ro);
+     if (rmed){
+       Npm(1) = exp(log_Ro);
+     } else {
+       Npm(1) = Nm(ntime,1);
+     }
+
+     if(j<=npbr){
+       Frefh = exp(log_Fref(j));
+       Frefm = exp(log_Fref(j));
+     } else {
+       Frefh = exp(log_Fh(ntime));
+       Frefm = exp(log_Fm(ntime));
+     }
+
+     Fpbrh = Sel_h(ntime)*Frefh;
+     Zpbrh = Fpbrh + Mh;
+     Sph   = exp(-1.*Zpbrh);
+     tac_h(i,j) = sum(elem_prod(elem_prod(elem_div(Fpbrh,Zpbrh),elem_prod(Nph,(1-Sph)))*Prob_talla_h,Wmed(2)));
+     ssb_h(i,j) = sum(elem_prod(elem_prod(elem_prod(Nph,mfexp(-dt(1)*Zpbrh))*Prob_talla_h,msex),Wmed(2)));
+
+     Fpbrm = Sel_m(ntime)*Frefm;
+     Zpbrm = Fpbrm + Mm;
+     Spm   = exp(-1.*Zpbrm);
+     tac_m(i,j) = sum(elem_prod(elem_prod(elem_div(Fpbrm,Zpbrm),elem_prod(Npm,(1-Spm)))*Prob_talla_m,Wmed(2)));
+     ssb_m(i,j) = sum(elem_prod(elem_prod(elem_prod(Npm,mfexp(-dt(1)*Zpbrm))*Prob_talla_m,msex),Wmed(2)));
+
+     tac_t(i,j) = tac_h(i,j) + tac_m(i,j);
+     ssb_t(i,j) = ssb_h(i,j) + ssb_m(i,j);
+     // en tac_t (_m _h) almaceno para los ahnos de proyeccion (i) y los diferentes ratios (j) la CBA. La primera fila
+     // es la tac para el 2020, las siguientes dependen de los ahnos que se formulen para proyectar
+     // Similar es la asignacion en ssb_t 
+   }
+ }
 
 FUNCTION Eval_CTP
 
@@ -790,17 +857,17 @@ FUNCTION Eval_CTP
  BDp=sum(elem_prod(elem_prod(NMDp,msex),Wmed(2))) ;
  CTP=elem_prod(elem_prod(elem_div(Fpbrh,Zpbrh),elem_prod(Nph,(1-Sph)))*Prob_talla_h,Wmed(2));
  CTP+=elem_prod(elem_prod(elem_div(Fpbrm,Zpbrm),elem_prod(Npm,(1-Spm)))*Prob_talla_m,Wmed(1));
- 
+
  YTP(i,j)=sum(CTP);//************
  SSBp(i,j)=BDp;//************
  BTp(i,j)=Bph+Bpm;//************
 
- // año siguiente
+ // aï¿½o siguiente
  Npplus=Nph(nedades)*Sph(nedades);
  Nph(2,nedades)=++elem_prod(Nph(1,nedades-1),Sph(1,nedades-1));
  Nph(nedades)+=Npplus;
-
  Nph(1)=exp(log_Ro);// Poyecta con R constante
+
  Npplus=Npm(nedades)*Spm(nedades);
  Npm(2,nedades)=++elem_prod(Npm(1,nedades-1),Spm(1,nedades-1));
  Npm(nedades)+=Npplus;
@@ -820,12 +887,12 @@ FUNCTION Eval_CTP
  Spm=exp(-1.*Zpbrm);
 
  }}
- 
+
  CBA=YTP(2);//************
 
- // Rutina para la estimación de RPR
+ // Rutina para la estimaciï¿½n de RPR
 
- Nvp=Nv(ntime);// toma la ultima estimación
+ Nvp=Nv(ntime);// toma la ultima estimaciï¿½n
 
 
  for (int i=1;i<=ntime_sim;i++)
@@ -846,7 +913,7 @@ FUNCTION Eval_CTP
 
 REPORT_SECTION
 
- report << "Años" << endl;
+ report << "Aï¿½os" << endl;
  report << yrs << endl;
  report << "CPUE_obs" << endl;
  report << CPUE << endl;
@@ -950,9 +1017,9 @@ REPORT_SECTION
  report << SSBo << endl;
 
 
- report << "Reducción_del_stock_(BD/BDo)_dinámico" << endl;
+ report << "Reducciï¿½n_del_stock_(BD/BDo)_dinï¿½mico" << endl;
  report << RPR << endl;
- report << "Reducción_del_stock_(BD/BDo)_de_LP" << endl;
+ report << "Reducciï¿½n_del_stock_(BD/BDo)_de_LP" << endl;
  report << RPRlp << endl;
 
  report << "-----------------------------------------------" << endl;
@@ -969,7 +1036,7 @@ REPORT_SECTION
  report << mu_edadm<< endl;
  report << "L(edad)_hembras" << endl;
  report << mu_edadh << endl;
- 
+
  report << "-----------------------------------------------" << endl;
 
  report << "P(edad)_machos" << endl;
@@ -1018,6 +1085,24 @@ REPORT_SECTION
  report << "Captura proyectada (ultima columna es Fsq)" << endl;
  report << YTP << endl;
 
+ report << "tac_h" << endl;
+ report << tac_h << endl;
+
+ report << "tac_m" << endl;
+ report << tac_m << endl;
+
+ report << "tac_t" << endl;
+ report << tac_t << endl;
+
+ report << "ssb_h" << endl;
+ report << ssb_h << endl;
+
+ report << "ssb_m" << endl;
+ report << ssb_m << endl;
+
+ report << "ssb_t" << endl;
+ report << ssb_t << endl;
+
 
 FUNCTION Eval_mcmc
 
@@ -1044,5 +1129,3 @@ FINAL_SECTION
  cout<<"--Runtime: ";
  cout<<hour<<" hours, "<<minute<<" minutes, "<<second<<" seconds"<<endl;
  cout<<"*********************************************"<<endl;
-
-
