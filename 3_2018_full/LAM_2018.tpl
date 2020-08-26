@@ -570,12 +570,12 @@ FUNCTION Eval_abundancia
  beta=(1-h)*SSBo/(5*h-1);
 
 
- // genero una estructura inicial en equilibrio para el primer anho
- Neqh(1)=mfexp(log_Ro);//hembras //Revisar esta ecuación y comparar con machos (586)
+ // genero una estructura inicial en equilibrio para el primer a–o
+ Neqh(1)=mfexp(log_Ro);//hembras
 
  for (j=2;j<=nedades;j++)
  {
-   Neqh(j)=Neqh(j-1)*exp(-Zh(1,j-1)); // Debiese ser sólo M ??? 
+   Neqh(j)=Neqh(j-1)*exp(-Zh(1,j-1));
  }
 
 //   Neqh(nedades)+=Neqh(nedades)*exp(-1.*Zh(1,nedades)); // MODIFICAR POR LA OTRA FORMA
@@ -619,7 +619,7 @@ FUNCTION Eval_abundancia
 
 	 // Abundancia edad 2 en adelante
      Nm(i+1)(2,nedades)=++elem_prod(Nm(i)(1,nedades-1),Sm(i)(1,nedades-1));
-     Nm(i+1,nedades)=Nm(i+1,nedades)+Nm(i,nedades)*Sm(i,nedades);// grupo plus // Consistencia con GPlus definido en lineas 582 y 594
+     Nm(i+1,nedades)=Nm(i+1,nedades)+Nm(i,nedades)*Sm(i,nedades);// grupo plus
      
      Nh(i+1)(2,nedades)=++elem_prod(Nh(i)(1,nedades-1),Sh(i)(1,nedades-1));
      Nh(i+1,nedades)=Nh(i+1,nedades)+Nh(i,nedades)*Sh(i,nedades);// grupo plus
