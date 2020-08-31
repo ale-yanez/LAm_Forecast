@@ -272,20 +272,21 @@
  4
 
 # Tasa_bdpr
- 0.538 0.539 0.5395 0.54
+ #0.538 0.539 0.5395 0.54
+ 0.3 0.4 0.45 0.5053
 
 # yr_proy
- 3
+ 5
 
 # pry_nR
- 1.25
+ 1
 
 # opt_sim
  1
 
 # New control input
 # rec_opt
-3
+1
 
 # Ajusta reclutas ahno sin datos  (solo con opcion > 2)
 1.0 1.0
@@ -297,10 +298,10 @@
 0.00000001 0.9 1.0 1.1
 
 # Fmsy
-1.9
+0.269579
 
 # Corrige captura year-CBA (rCaph, rCapm)
-0.1 0.1
+1.018 1.018
 
 # debug()
 -999

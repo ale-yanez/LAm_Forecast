@@ -1044,8 +1044,8 @@ FUNCTION Eval_CTP
 		// Se considera el mismo F de hembras en los machos
 //		Fpbrh=Sel_floh(nyears)*exp(log_Fref(j));
 //		Fpbrm=Sel_flom(nyears)*exp(log_Fref(j));
-		Fpbrh=Sel_floh(nyears)*0.190146;
-		Fpbrm=Sel_flom(nyears)*0.190146;
+		Fpbrh=Sel_floh(nyears)*0.269579;
+		Fpbrm=Sel_flom(nyears)*0.269579;
 		Zpbrh=Fpbrh+Mh;
 		Zpbrm=Fpbrm+Mm;
 		Sph=exp(-1.*Zpbrh);
