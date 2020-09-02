@@ -1120,6 +1120,7 @@ void model_parameters::sim_Fcte(void)
      Fthp(nyears) = Ffemale(nyears);
      Ftmp(nyears) = Fmale(nyears);
      Ftp(nyears)  = Ftotal(nyears);
+ cout<< " " << Ffemale << endl; exit(0);
   	 whp  = Wmed(2);
   	 wmp  = Wmed(1);
      SBp(nyears) = BD(nyears);
@@ -1230,8 +1231,8 @@ void model_parameters::Eval_CTP(void)
 		Npm(nedades)+=Npplus;
 		Npm(1)=exp(log_Ro)*exp(log_propmR)/(1-exp(log_propmR));
 		// Se considera el mismo F de hembras en los machos
-		Fpbrh=Sel_floh(nyears)*0.190146;
-		Fpbrm=Sel_flom(nyears)*0.190146;
+		Fpbrh=Sel_floh(nyears)*0.269579;
+		Fpbrm=Sel_flom(nyears)*0.269579;
 		Zpbrh=Fpbrh+Mh;
 		Zpbrm=Fpbrm+Mm;
 		Sph=exp(-1.*Zpbrh);

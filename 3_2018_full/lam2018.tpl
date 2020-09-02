@@ -145,7 +145,7 @@ DATA_SECTION
  init_number ajRh
  init_number ajRm
  init_int nFt
- init_vector mf(1,nFt)
+ init_vector mf(1,nFt);
  init_number Fmsy
  init_number rCaph
  init_number rCapm
