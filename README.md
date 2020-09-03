@@ -14,7 +14,7 @@ Estos ejercicios son completamente de nivel académico y no representan ni sugie
 
 - [x] Buscar alcanzar captura 2019 con mayor detalle desde modelo 2018
 - [x] Graficar proyecciones con modelo 2018
-- [ ] Graficar con distintas opciones de reclutamiento (opt 1, 2 y 3) observar incidencia de Rec en proyecciones
+- [x] Graficar capturas con distintas opciones de reclutamiento (opt 1, 2 y 3) observar incidencia de Rec en proyecciones
 - [ ] Mismos pasos para LAm_2017
 - [ ] Mismos pasos para LAm_2016
 - [ ] Implementar mismo codigo en LAmS.tpl

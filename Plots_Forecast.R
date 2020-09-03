@@ -133,8 +133,33 @@ p5
 ggsave(p5, filename = "Figs/Catch_2018.png", width=8.5, height=5.5, dpi=300)
 
 
+# Read proyecciones opcion Rec 2
+prj_2 <- reptoRlist("./3_2018_full/salidas/Rec2.prj")
+prj_3 <- reptoRlist("./3_2018_full/salidas/Rec3.prj")
 
+# Catch
+p6 <- ggplot(data = NULL, aes(x = c(yrs, 2019, 2020))) + 
+  geom_line(aes(y = c(prj$Y_total[,2],rep(NA,2)), colour = 'b_18', linetype = 'b_18')) +
+  #geom_line(aes(y = c(prj_2$Y_total[,2],rep(NA,2)), colour = 'b2_18', linetype = 'b2_18')) +
+  #geom_line(aes(y = c(prj_3$Y_total[,2],rep(NA,2)), colour = 'b3_18', linetype = 'b3_18'))# +
+  geom_line(aes(y = c(rep(NA,length(yrs)-1),prj$Y_total_proj[1:3,3]), colour = 'prj', linetype = 'prj'))  +
+  geom_line(aes(y = c(rep(NA,length(yrs)-1),prj_2$Y_total_proj[1:3,3]), colour = 'prj2', linetype = 'prj2'))  +
+  geom_line(aes(y = c(rep(NA,length(yrs)-1),prj_3$Y_total_proj[1:3,3]), colour = 'prj3', linetype = 'prj3'))  +
+  #geom_ribbon(data=NULL, aes(ymin=c(prj$Rec_male[,4],rep(NA,2)), ymax=c(prj$Rec_male[,5],rep(NA,2)), fill = 'grey55', alpha = 0.4)) 
+  
+  scale_color_manual(name = '',
+                     values = c('royalblue3', 'red1', 'green', 'gold'),
+                     limits = c('b_18', 'prj','prj2','prj3'),
+                     breaks = c('b_18', 'prj','prj2','prj3')) +
+  scale_linetype_manual(name = '',
+                        values = c('solid', 'dotted','dotted','dotted'),
+                        limits = c('b_18', 'prj','prj2','prj3'),
+                        breaks = c('b_18', 'prj','prj2','prj3'))
+p6 <- p6 + theme_bw() + 
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.text=element_text(size=9)) +
+  theme(legend.position = 'bottom') + ylab('Catch') + xlab('Años') + scale_x_continuous(breaks=round(seq(min(yrs), 2020, by = 5),1))
 
-
+p6
+ggsave(p6, filename = "Figs/Catch_Recs2018.png", width=8.5, height=5.5, dpi=300)
 
 

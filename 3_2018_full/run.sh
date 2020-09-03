@@ -27,8 +27,11 @@ mv -v $exe.std $out/$don.std
 mv -v $exe.par $out/$don.par
 mv -v $exe.rep $out/$don.rep
 mv -v $exe.bar $out/$don.bar
-cp -v proyecciones.txt $out/$don.prj
+#cp -v proyecciones.txt $out/$don.prj
+cp -v proyecciones.txt $out/Rec2.prj
+#cp -v proyecciones.txt $out/Rec3.prj
 #mv -v proyecciones.lam $out/$don.prj
+
 
 if [ $1 == "true" ]; then
   echo "clean all variables"
