@@ -8,12 +8,12 @@ La estimación de CBA para langostino amarillo se realiza en octubre de cada añ
 Estos ejercicios son completamente de nivel académico y no representan ni sugieren medidas de manejo algunas
 
 
-Task List
+####Task List
 
  :nerd_face:
 
 - [x] Buscar alcanzar captura 2019 con mayor detalle desde modelo 2018
-- [ ] Graficar proyecciones con modelo 2018
+- [x] Graficar proyecciones con modelo 2018
 - [ ] Graficar con distintas opciones de reclutamiento (opt 1, 2 y 3) observar incidencia de Rec en proyecciones
 - [ ] Mismos pasos para LAm_2017
 - [ ] Mismos pasos para LAm_2016

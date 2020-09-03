@@ -1120,7 +1120,6 @@ void model_parameters::sim_Fcte(void)
      Fthp(nyears) = Ffemale(nyears);
      Ftmp(nyears) = Fmale(nyears);
      Ftp(nyears)  = Ftotal(nyears);
- cout<< " " << Ffemale << endl; exit(0);
   	 whp  = Wmed(2);
   	 wmp  = Wmed(1);
      SBp(nyears) = BD(nyears);
@@ -1261,7 +1260,7 @@ void model_parameters::Write_proj(void)
  int k, i;
  adstring report_name;
    {
-     report_name = "proyecciones.lam";
+     report_name = "proyecciones.txt";
      ofstream R_report(report_name);
      R_report << "Debug" << endl;
      R_report << offsetCt << endl;

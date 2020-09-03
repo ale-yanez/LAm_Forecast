@@ -1076,7 +1076,8 @@ FUNCTION Write_proj
  int k, i;
  adstring report_name;
    {
-     report_name = "proyecciones.lam";
+//     report_name = "proyecciones.lam";
+     report_name = "proyecciones.txt";
      ofstream R_report(report_name);
 
      R_report << "Debug" << endl;
