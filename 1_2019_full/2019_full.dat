@@ -288,10 +288,10 @@
  
 # New control input
 # rec_opt
-2
+3
 
 # Ajusta reclutas ahno sin datos  (solo con opcion > 2)
-1.0 1.0
+0.5 0.5
 
 # opt_msy
 4
