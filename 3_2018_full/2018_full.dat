@@ -286,7 +286,7 @@
 
 # New control input
 # rec_opt
-2
+1
 
 # Ajusta reclutas ahno sin datos  (solo con opcion > 2)
 1.0 1.0
@@ -298,7 +298,7 @@
 0.00000001 0.9 1.0 1.1
 
 # Fmsy
-0.271454
+0.269579
 
 # Corrige captura year-CBA (rCaph, rCapm)
 1.018 1.018

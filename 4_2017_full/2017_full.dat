@@ -265,10 +265,10 @@
  4 
 
 # Tasa_bdpr 
- 0.3 0.4 0.45 0.49 
+ 0.3 0.4 0.45 0.531459 
 
 # yr_proy 
- 6 
+ 4 
 
 # pry_nR 
  1 
@@ -293,7 +293,7 @@
 0.268562
 
 # Corrige captura year-CBA (rCaph, rCapm)
-1.32 1.32
+1.325 1.325
 
 # debug()
 -999

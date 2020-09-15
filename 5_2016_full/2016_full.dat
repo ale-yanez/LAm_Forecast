@@ -263,11 +263,33 @@
  0.3 0.4 0.45 0.49 
 
 # yr_proy 
- 20 
+ 4 
 
 # pry_nR 
  1 
 
 # opt_sim 
  1 
+
+# New control input
+# rec_opt
+1
+
+# Ajusta reclutas ahno sin datos  (solo con opcion > 2)
+1.0 1.0
+
+# opt_msy
+4
+
+# multipler Fmsy
+0.00000001 0.9 1.0 1.1
+
+# Fmsy
+0.267176
+
+# Corrige captura year-CBA (rCaph, rCapm)
+0.708 0.708
+
+# debug()
+-999
 
