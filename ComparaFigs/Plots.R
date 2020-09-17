@@ -208,5 +208,31 @@ ggsave(p7, filename = "Catch_1820_19parFull_2.png", width=8.5, height=5.5, dpi=3
 
 
 
+# Catch 7 ultimos años 17 full a 2019 (18=17)
+prj17_19 <- reptoRlist("../4_2017_2_full/salidas/4_2017_2_full.prj")
+b18_full <- reptoRlist("../3_2018_full/LAM_2018.rep")
+
+p8 <- ggplot(data = NULL, aes(x = c(2013:2019))) + 
+  geom_line(aes(y = c(b18_full$Desemb[1,29:34],b18_full$C_proy[2,3]), colour = 'b18_full', linetype = 'b18_full')) +
+  geom_line(aes(y = c(rep(NA,4),prj17_19$Y_total_proj[1:3,3]), colour = 'prj17_19', linetype = 'prj17_19'))  +
+  #geom_ribbon(data=NULL, aes(ymin=c(prj$Rec_male[,4],rep(NA,2)), ymax=c(prj$Rec_male[,5],rep(NA,2)), fill = 'grey55', alpha = 0.4)) 
+  
+  scale_color_manual(name = '',
+                     values = c('royalblue3', 'red1'),
+                     limits = c('b18_full', 'prj17_19'),
+                     breaks = c('b18_full', 'prj17_19')) +
+  scale_linetype_manual(name = '',
+                        values = c('dotted', 'solid'),
+                        limits = c('b18_full', 'prj17_19'),
+                        breaks = c('b18_full', 'prj17_19'))
+p8 <- p8 + theme_bw() + 
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.text=element_text(size=9)) +
+  theme(legend.position = 'bottom') + ylab('Catch') + xlab('Años') + scale_x_continuous(breaks=round(seq(2013, 2019, by = 1),1))
+
+p8
+ggsave(p8, filename = "Catch_1820_19parFull_2.png", width=8.5, height=5.5, dpi=300)
+
+
+
 
 
