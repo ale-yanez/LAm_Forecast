@@ -12,7 +12,8 @@ setwd(dirname(current_path ))
 devtools::source_url("https://github.com/ale-yanez/RFunctions/blob/master/read.admb.R?raw=TRUE")
 devtools::source_url("https://github.com/ale-yanez/RFunctions/blob/master/read.report.R?raw=TRUE")
 
-prj <- reptoRlist("./1_2019_full/salidas/1_2019_full.prj")
+#prj_1  <- reptoRlist("./1_2019_full/salidas/1_2019_full.prj")
+prj_1  <- reptoRlist("./1_2019_full_1/salidas/1_2019_full_1.prj")
 
 prj$Rec_male
 
