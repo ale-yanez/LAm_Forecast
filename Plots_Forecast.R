@@ -95,7 +95,7 @@ ggsave(p3, filename = "Figs/2019_2021/F19_21_1.png", width=8.5, height=5.5, dpi=
 p4 <- ggplot(data = NULL, aes(x = c(yrs, lastyr+1, lastyr+2))) + 
   geom_line(aes(y = c(prj_1$Y_total[,2],rep(NA,2)), colour = 'b_19', linetype = 'b_19')) +
   geom_line(aes(y = c(rep(NA,length(yrs)-1),prj_1$Y_total_proj[1:3,3]), colour = 'prj', linetype = 'prj'))  +
-  annotate('text', x=2021.7, y=850, label='922 t') +
+  annotate('text', x=2021.7, y=850, label='969 t') +
   
   scale_color_manual(name = '',
                      values = c('royalblue3', 'red1'),
@@ -189,7 +189,7 @@ lastyr <- tail(yrs, n=1)
 p7 <- ggplot(data = NULL, aes(x = c(yrs, lastyr+1, lastyr+2))) + 
   geom_line(aes(y = c(prj_opt3$Y_total[,2],rep(NA,2)), colour = 'b_19', linetype = 'b_19')) +
   geom_line(aes(y = c(rep(NA,length(yrs)-1),prj_opt3$Y_total_proj[1:3,3]), colour = 'prj', linetype = 'prj'))  +
-  annotate('text', x=2021, y=850, label='969 t') +
+  annotate('text', x=2021, y=850, label='922 t') +
   
   scale_color_manual(name = '',
                      values = c('royalblue3', 'red1'),
@@ -206,3 +206,66 @@ p7 <- p7 + theme_bw() +
 p7
 ggsave(p7, filename = "Figs/2019_2021/Catch19_21_opt3.png", width=8.5, height=5.5, dpi=300)
 
+
+# 2018 2020 opcion 1 ####
+P18_opt1  <- reptoRlist("./LAm_Norte/2_2018_full_1/salidas/2_2018_full_1.prj")
+
+P18_opt1$Rec_male
+
+# Para graficar ...
+yrs <- P18_opt1$Rec_male[,1]
+lastyr <- tail(yrs, n=1)
+
+
+# Catch
+p8 <- ggplot(data = NULL, aes(x = c(yrs, lastyr+1, lastyr+2))) + 
+  geom_line(aes(y = c(P18_opt1$Y_total[,2],rep(NA,2)), colour = 'b_18', linetype = 'b_18')) +
+  geom_line(aes(y = c(rep(NA,length(yrs)-1),P18_opt1$Y_total_proj[1:3,3]), colour = 'prj', linetype = 'prj'))  +
+  annotate('text', x=2020, y=750, label='897 t') +
+  
+  scale_color_manual(name = '',
+                     values = c('royalblue3', 'red1'),
+                     limits = c('b_18', 'prj'),
+                     breaks = c('b_18', 'prj')) +
+  scale_linetype_manual(name = '',
+                        values = c('solid', 'dotted'),
+                        limits = c('b_18', 'prj'),
+                        breaks = c('b_18', 'prj'))
+p8 <- p8 + theme_bw() + 
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.text=element_text(size=9)) +
+  theme(legend.position = 'bottom') + ylab('Catch') + xlab('Años') + scale_x_continuous(breaks=round(seq(min(yrs), 2020, by = 5),1))
+
+p8
+ggsave(p8, filename = "Figs/2018_2020/Catch18_20_opt1.png", width=8.5, height=5.5, dpi=300)
+
+
+# 2018 2020 opcion 2 ####
+P18_opt2  <- reptoRlist("./LAm_Norte/2_2018_full_2/salidas/2_2018_full_2.prj")
+
+P18_opt2$Rec_male
+
+# Para graficar ...
+yrs <- P18_opt2$Rec_male[,1]
+lastyr <- tail(yrs, n=1)
+
+
+# Catch
+p9 <- ggplot(data = NULL, aes(x = c(yrs, lastyr+1, lastyr+2))) + 
+  geom_line(aes(y = c(P18_opt2$Y_total[,2],rep(NA,2)), colour = 'b_18', linetype = 'b_18')) +
+  geom_line(aes(y = c(rep(NA,length(yrs)-1),P18_opt2$Y_total_proj[1:3,3]), colour = 'prj', linetype = 'prj'))  +
+  annotate('text', x=2020.5, y=750, label='925 t') +
+  
+  scale_color_manual(name = '',
+                     values = c('royalblue3', 'red1'),
+                     limits = c('b_18', 'prj'),
+                     breaks = c('b_18', 'prj')) +
+  scale_linetype_manual(name = '',
+                        values = c('solid', 'dotted'),
+                        limits = c('b_18', 'prj'),
+                        breaks = c('b_18', 'prj'))
+p9 <- p9 + theme_bw() + 
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.text=element_text(size=9)) +
+  theme(legend.position = 'bottom') + ylab('Catch') + xlab('Años') + scale_x_continuous(breaks=round(seq(min(yrs), 2020, by = 5),1))
+
+p9
+ggsave(p9, filename = "Figs/2018_2020/Catch18_20_opt2.png", width=8.5, height=5.5, dpi=300)
